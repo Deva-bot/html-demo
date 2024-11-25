@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Questions</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Search Questions</h2>
+        <form id="searchForm" onsubmit="return searchQuestions();">
+            <div class="form-group">
+                <label for="questionTitle">Enter Question Title:</label>
+                <input type="text" class="form-control" id="questionTitle" name="questionTitle" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+
+        <!-- View All Button -->
+        <div style="margin-top: 20px;">
+            <button class="btn btn-secondary" onclick="window.location.href='http://localhost:8080/DemoProject/ViewAllQuestionsServlet'">View All Questions</button>
+        </div>
+
+        <!-- Results Table -->
+        <div id="results" style="margin-top: 20px;">
+            <!-- Results will be populated here by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        function searchQuestions() {
+            const questionTitle = document.getElementById('questionTitle').value;
+
+            // Make an AJAX request
+            fetch('http://localhost:8080/DemoProject/SearchQuestionsServlet', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    questionTitle: questionTitle
+                })
+            })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('results').innerHTML = data; // Update results section
+                if (data.includes("No records found")) {
+                    alert("No records found.");
+                } else {
+                    alert("Search completed successfully.");
+                }
+            })
+            .catch(error => console.error('Error:', error));
+
+            return false; // Prevent form submission
+        }
+    </script>
+</body>
+</html>
